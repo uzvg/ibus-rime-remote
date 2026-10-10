@@ -5,6 +5,8 @@
 它**不切换 IBus 引擎**、**不依赖 X11/Wayland**、**不写任何本地缓存**，所有信息都来自实时查询。
 专为脚本和编辑器设计：`get` 只往 stdout 打印 `on` / `off`，`set` 成功时静默，所有解释性输出都要显式加 `--verbose`。
 
+在 Neovim 中自动切换输入法状态：[**ibus-rime-remote.nvim**](https://github.com/uzvg/ibus-rime-remote.nvim)。
+
 > [!NOTE]
 > **本项目由 LLM 生成。** 代码、文档（包括本 README）均由大语言模型（LLM）生成，请自行审阅后再使用。
 > 详见文末「关于本项目」一节。
