@@ -32,8 +32,16 @@ sudo dnf install glib2-devel
 构建：
 
 ```sh
-make          # 生成 ./ibus-rime-remote
-make clean    # 删除生成的二进制
+make            # 生成 ./ibus-rime-remote
+make install    # 安装到 ~/.local/bin/ibus-rime-remote
+make uninstall  # 从 ~/.local/bin/ 删除
+make clean      # 删除生成的二进制
+```
+
+`make install` 默认安装到 `~/.local/bin`，可用 `BINDIR` 覆盖：
+
+```sh
+make install BINDIR="$HOME/bin"
 ```
 
 ## 用法
