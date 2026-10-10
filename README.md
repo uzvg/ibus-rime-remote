@@ -151,6 +151,29 @@ busctl --address="$ADDR" call im.rime.Rime /org/freedesktop/IBus/Engine/6 \
     org.freedesktop.IBus.Engine PropertyActivate su InputMode 0
 ```
 
+## 在 VSCode 中自动切换
+
+配合 [VSCodeVim](https://marketplace.visualstudio.com/items?itemName=vscodevim.vim) 扩展，可在模式切换时自动切换中 / 英：
+离开插入模式时切到 `defaultIM`（这里设为 `on`，即西文），进入插入模式时用 `obtainIMCmd` 读回并恢复。
+
+在 VSCode 的 `settings.json` 中加入：
+
+```json
+"vim.autoSwitchInputMethod.defaultIM": "on",
+"vim.autoSwitchInputMethod.switchIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote set {im}",
+"vim.autoSwitchInputMethod.obtainIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote get",
+"vim.autoSwitchInputMethod.enable": true,
+"workbench.settings.applyToAllProfiles": [
+    "vim.autoSwitchInputMethod.enable",
+    "vim.autoSwitchInputMethod.obtainIMCmd",
+    "vim.autoSwitchInputMethod.switchIMCmd"
+],
+```
+
+`{im}` 会被 VSCodeVim 替换为目标值，正好对应该工具的 `set`；`obtainIMCmd` 对应 `get`。
+`workbench.settings.applyToAllProfiles` 让以上设置应用到所有配置档案（profile）。
+把命令路径换成你自己的 `ibus-rime-remote` 所在位置即可。
+
 ## 关于本项目
 
 > [!IMPORTANT]
