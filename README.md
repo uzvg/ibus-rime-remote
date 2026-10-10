@@ -5,8 +5,6 @@
 它**不切换 IBus 引擎**、**不依赖 X11/Wayland**、**不写任何本地缓存**，所有信息都来自实时查询。
 专为脚本和编辑器设计：`get` 只往 stdout 打印 `on` / `off`，`set` 成功时静默，所有解释性输出都要显式加 `--verbose`。
 
-在 Neovim 中自动切换输入法状态：[**ibus-rime-remote.nvim**](https://github.com/uzvg/ibus-rime-remote.nvim)。
-
 > [!NOTE]
 > **本项目由 LLM 生成。** 代码、文档（包括本 README）均由大语言模型（LLM）生成，请自行审阅后再使用。
 > 详见文末「关于本项目」一节。
@@ -119,6 +117,45 @@ else
 fi
 ```
 
+## 在 Neovim 中使用
+
+插件：[**ibus-rime-remote.nvim**](https://github.com/uzvg/ibus-rime-remote.nvim)。
+
+**Neovim 自带 package（启动时自动加载）：**
+
+```sh
+git clone https://github.com/uzvg/ibus-rime-remote.nvim \
+  ~/.local/share/nvim/site/pack/plugins/start/ibus-rime-remote.nvim
+```
+
+**lazy.nvim：**
+
+```lua
+{ "uzvg/ibus-rime-remote.nvim", lazy = false, opts = {} }
+```
+
+安装后即在 `InsertLeave` / `InsertEnter` 时自动切换中 / 英（进入普通模式切西文，离开时恢复），默认无需额外配置。
+若 lazy 配置里 `defaults = { lazy = true }`，`lazy = false` 是必须的。
+
+## 在 VSCode 中使用
+
+安装 [VSCodeVim](https://marketplace.visualstudio.com/items?itemName=vscodevim.vim) 扩展，然后在 `settings.json` 中加入：
+
+```json
+"vim.autoSwitchInputMethod.defaultIM": "on",
+"vim.autoSwitchInputMethod.switchIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote set {im}",
+"vim.autoSwitchInputMethod.obtainIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote get",
+"vim.autoSwitchInputMethod.enable": true,
+"workbench.settings.applyToAllProfiles": [
+    "vim.autoSwitchInputMethod.enable",
+    "vim.autoSwitchInputMethod.obtainIMCmd",
+    "vim.autoSwitchInputMethod.switchIMCmd"
+],
+```
+
+`{im}` 会被 VSCodeVim 替换为目标值，正好对应该工具的 `set`；`obtainIMCmd` 对应 `get`。
+命令路径按自己的安装位置修改即可。
+
 ## 工作原理（简述）
 
 1. 连接到 IBus 总线，枚举总线名（默认 `im.rime.Rime`）下 `/org/freedesktop/IBus/Engine/<id>` 的对象。
@@ -150,29 +187,6 @@ busctl --address="$ADDR" tree im.rime.Rime
 busctl --address="$ADDR" call im.rime.Rime /org/freedesktop/IBus/Engine/6 \
     org.freedesktop.IBus.Engine PropertyActivate su InputMode 0
 ```
-
-## 在 VSCode 中自动切换
-
-配合 [VSCodeVim](https://marketplace.visualstudio.com/items?itemName=vscodevim.vim) 扩展，可在模式切换时自动切换中 / 英：
-离开插入模式时切到 `defaultIM`（这里设为 `on`，即西文），进入插入模式时用 `obtainIMCmd` 读回并恢复。
-
-在 VSCode 的 `settings.json` 中加入：
-
-```json
-"vim.autoSwitchInputMethod.defaultIM": "on",
-"vim.autoSwitchInputMethod.switchIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote set {im}",
-"vim.autoSwitchInputMethod.obtainIMCmd": "/home/uzvg/.local/bin/ibus-rime-remote get",
-"vim.autoSwitchInputMethod.enable": true,
-"workbench.settings.applyToAllProfiles": [
-    "vim.autoSwitchInputMethod.enable",
-    "vim.autoSwitchInputMethod.obtainIMCmd",
-    "vim.autoSwitchInputMethod.switchIMCmd"
-],
-```
-
-`{im}` 会被 VSCodeVim 替换为目标值，正好对应该工具的 `set`；`obtainIMCmd` 对应 `get`。
-`workbench.settings.applyToAllProfiles` 让以上设置应用到所有配置档案（profile）。
-把命令路径换成你自己的 `ibus-rime-remote` 所在位置即可。
 
 ## 关于本项目
 
